@@ -1,14 +1,89 @@
-DO $$
+CREATE OR REPLACE PROCEDURE sp_obter_notas_para_compor_o_troco(
+	OUT resultado VARCHAR(500),
+	IN troco INT
+) LANGUAGE plpgsql AS $$
 DECLARE
-	valor_total INT;
+	notas200 INT := 0;
+	notas100 INT := 0;
+	notas50 INT := 0;
+	notas20 INT := 0;
+	notas10 INT := 0;
+	notas5 INT := 0;
+	notas2 INT := 0;
+	moedas1 INT := 0;
 BEGIN
-	CALL sp_calcular_valor_de_um_pedido(1, valor_total);
-	RAISE NOTICE 
-		'Total do pedido %: R$%',
-		1,
-		valor_total;
+	nota200 := troco / 200;
+	notas100 := troco % 200 / 100;
 END;
 $$
+
+
+--escrever um bloquinho anônimo
+--chama o proc para calcular o valor do pedido 1
+-- chama o proc para calcular o valor do troco quando o valor de pagamento é igual a 100
+-- por fim, ele mostra o total da conta e o valor de troco
+
+-- DO $$
+-- DECLARE
+-- 	troco INT;
+-- 	valor_total INT;
+-- 	valor_a_pagar INT := 100;
+-- BEGIN
+-- 	CALL sp_calcular_valor_de_um_pedido(1, valor_total);
+-- 	CALL sp_calcular_troco(troco, valor_a_pagar, valor_total);
+-- 	RAISE 'Você consumiu R$% e pagou R$%. Portanto, seu troco é R$%', valor_total, valor_a_pagar, troco;
+-- END;
+-- $$
+
+-- CREATE OR REPLACE PROCEDURE sp_calcular_troco(
+-- 	OUT p_troco INT,
+-- 	IN p_valor_a_pagar INT,
+-- 	IN p_valor_total INT
+-- ) LANGUAGE plpgsql AS $$
+-- BEGIN
+-- 	p_troco := p_valor_a_pagar - p_valor_total;
+-- END;
+-- $$
+-- DO $$
+-- BEGIN
+-- 	CALL sp_fechar_pedido(200, 1);
+-- END;
+-- $$
+-- SELECT * FROM tb_pedido;
+-- DROP PROCEDURE sp_fechar_pedido;
+-- CREATE OR REPLACE PROCEDURE sp_fechar_pedido(
+-- 	IN p_valor_a_pagar INT,
+-- 	IN p_cod_pedido INT
+-- ) LANGUAGE plpgsql AS $$
+-- DECLARE
+-- 	valor_total INT;
+-- BEGIN
+-- 	CALL sp_calcular_valor_de_um_pedido(
+-- 		p_cod_pedido,
+-- 		valor_total
+-- 	);
+-- 	IF p_valor_a_pagar < valor_total THEN
+-- 		RAISE 'R$% é insuficiente para pagar a conta de R$%', p_valor_a_pagar, valor_total;
+-- 	ELSE
+-- 		UPDATE tb_pedido p SET
+-- 			data_modificacao = CURRENT_TIMESTAMP,
+-- 			status = 'fechado'
+-- 			WHERE p.cod_pedido = $2;
+-- 	END IF;
+-- END;
+-- $$
+
+-- DO $$
+-- DECLARE
+-- 	valor_total INT;
+-- BEGIN
+-- 	CALL sp_calcular_valor_de_um_pedido(1, valor_total);
+-- 	RAISE NOTICE 
+-- 		'Total do pedido %: R$%',
+-- 		1,
+-- 		valor_total;
+-- END;
+-- $$
 
 
 -- CREATE OR REPLACE PROCEDURE sp_calcular_valor_de_um_pedido(
@@ -45,7 +120,7 @@ $$
 --3, Hamburguer, 12
 --4, Batata frita, 9
 
-CALL sp_adicionar_item_a_pedido(2, 1);
+CALL sp_adicionar_item_a_pedido(3, 1);
 SELECT * FROM tb_item_pedido;
 SELECT * FROM tb_pedido;
 SELECT * FROM tb_item;
